@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using AutoMapper;
+using SimpleInjector;
 using SimpleInjector.Integration.Web;
 using SimpleInjector.Integration.Web.Mvc;
 using SimpleInjector.Lifestyles;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using webshop.Repositories;
 using webshop.Util;
 
 namespace webshop
@@ -56,6 +58,9 @@ namespace webshop
             container.Register(() => new ApplicationDbContext(), Lifestyle.Scoped);
 
             container.Register<IConfig, Config>(Lifestyle.Singleton);
+
+            container.Register<IProductsRepository, ProductsRepository>();
+            container.Register<IAuthorsRepository, AuthorsRepository>();
 
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
             container.Verify();

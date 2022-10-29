@@ -4,6 +4,8 @@ using Owin;
 using webshop.Entities;
 using System;
 using System.Linq;
+using AutoMapper;
+using webshop.Repositories;
 
 [assembly: OwinStartupAttribute(typeof(webshop.Startup))]
 namespace webshop
@@ -16,6 +18,7 @@ namespace webshop
         public void Configuration(IAppBuilder app)
         {
             ConfigureDatabase();
+            ConfigureMapping();
             ConfigureDependencyInjection();
         }
 
@@ -131,6 +134,15 @@ namespace webshop
                 context.AuthoredBy.Add(warOfTheRingAuthoredByChristopher);
                 context.SaveChanges();
             }
+        }
+
+        private void ConfigureMapping()
+        {
+            Mapper.Initialize(config =>
+            {
+                ProductsRepository.ConfigureMapping(config);
+                AuthorsRepository.ConfigureMapping(config);
+            });
         }
     }
 }
