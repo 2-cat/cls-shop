@@ -6,6 +6,8 @@ using System;
 using System.Linq;
 using AutoMapper;
 using webshop.Repositories;
+using webshop.Models;
+using System.Collections.Generic;
 
 [assembly: OwinStartupAttribute(typeof(webshop.Startup))]
 namespace webshop
@@ -17,9 +19,9 @@ namespace webshop
 
         public void Configuration(IAppBuilder app)
         {
-            ConfigureDatabase();
             ConfigureMapping();
             ConfigureDependencyInjection();
+            ConfigureDatabase();
         }
 
         private void ConfigureDependencyInjection()
@@ -34,106 +36,97 @@ namespace webshop
          */
         private void ConfigureDatabase()
         {
-            using (var context = new ApplicationDbContext())
+            var productRepository = container.GetInstance<IProductsRepository>();
+            var authorRepository = container.GetInstance<IAuthorsRepository>();
+            var customerRepository = container.GetInstance<ICustomerRepository>();
+
+            // There's no need to create additional (or duplicate) entries if this step has already been completed before. 
+            if (authorRepository.GetRange().Count > 0)
             {
-                var existingCustomer = context.Customers.FirstOrDefault(e => e.FirstName == "Buggs" && e.LastName == "Bunny");
-                if(existingCustomer != null)
-                {
-                    // There's no need to create additional (or duplicate) entries if this step has already been completed before. 
-                    return;
-                }
-
-                var customerAddress = new AddressEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    City = "Haarlem",
-                    StreetName = "Haarlemmerstraat",
-                    HouseNumber = 1,
-                    Postcode = "1234ZY",
-                    DateCreated = DateTime.Now
-                };
-
-                context.Addresses.Add(customerAddress);
-
-                var customer = new CustomerEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = "Buggs",
-                    LastName = "Bunny",
-                    DateCreated = DateTime.Now,
-                    AddressId = customerAddress.Id
-                };
-
-                context.Customers.Add(customer);
-
-                var secondAddress = new AddressEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    City = "Utrecht",
-                    StreetName = "Drieharingstraat",
-                    HouseNumber = 6,
-                    Postcode = "9876AB",
-                    DateCreated = DateTime.Now
-                };
-
-                context.Addresses.Add(secondAddress);
-
-                var secondCustomer = new CustomerEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = "Daffy",
-                    LastName = "Duck",
-                    DateCreated = DateTime.Now,
-                    AddressId = secondAddress.Id
-                };
-
-                context.Customers.Add(secondCustomer);
-
-                var jrrTolkien = new AuthorEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "J.R.R. Tolkien"
-                };
-
-                context.Authors.Add(jrrTolkien);
-
-                var christopherTolkien = new AuthorEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Christopher Tolkien"
-                };
-
-                context.Authors.Add(christopherTolkien);
-
-                var warOfTheRing = new ProductEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    DateCreated = DateTime.Now,
-                    Name = "War of the Ring",
-                    Description = "The third part of The History of The Lord of the Rings, an enthralling account of the writing of the Book of the Century which contains many additional scenes and includes the unpublished Epilogue in its entirety.",
-                    Price = 14.99m
-                };
-
-                context.Products.Add(warOfTheRing);
-
-                var warOfTheRingAuthoredByJRR = new AuthoredByEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    AuthorId = jrrTolkien.Id,
-                    ProductId = warOfTheRing.Id
-                };
-
-                context.AuthoredBy.Add(warOfTheRingAuthoredByJRR);
-
-                var warOfTheRingAuthoredByChristopher = new AuthoredByEntity()
-                {
-                    Id = Guid.NewGuid(),
-                    AuthorId = christopherTolkien.Id,
-                    ProductId = warOfTheRing.Id
-                };
-                context.AuthoredBy.Add(warOfTheRingAuthoredByChristopher);
-                context.SaveChanges();
+                return;
             }
+
+            var jrrTolkienId = authorRepository.Create("J.R.R. Tolkien");
+            var christopherTolkienId = authorRepository.Create("Christopher Tolkien");
+            var frankHerbertId = authorRepository.Create("Frank Herbert");
+            var joeAbercrombieId = authorRepository.Create("Joe Abercrombie");
+
+            var warOfTheRing = new ProductModel()
+            {
+                Name = "War of the Ring",
+                Description = "The third part of The History of The Lord of the Rings, an enthralling account of the writing of the Book of the Century which contains many additional scenes and includes the unpublished Epilogue in its entirety. ",
+                Price = 14.99m,
+                Authors = authorRepository.GetByName("Tolkien")
+            };
+
+            productRepository.Create(warOfTheRing);
+
+            var morgothsRing = new ProductModel()
+            {
+                Name = "Morgoth's Ring",
+                Description = "The first of two companion volumes which documents the later writing of The Silmarillion, Tolkien's epic tale of war. ",
+                Price = 10m,
+                Authors = authorRepository.GetByName("Christopher Tolkien")
+            };
+            productRepository.Create(morgothsRing);
+
+            var dune = new ProductModel()
+            {
+                Name = "Dune",
+                Description = "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the “spice” melange, a drug capable of extending life and enhancing consciousness.",
+                Price = 10m,
+                Authors = new List<AuthorModel>()
+                {
+                    authorRepository.GetById(frankHerbertId)
+                }
+            };
+            productRepository.Create(dune);
+
+            var theBladeItself = new ProductModel()
+            {
+                Name = "The Blade itself",
+                Description = "Logen Ninefingers, infamous barbarian, has finally run out of luck. Caught in one feud too many, he’s on the verge of becoming a dead barbarian – leaving nothing behind him but bad songs, dead friends, and a lot of happy enemies. ",
+                Price = 10m,
+                Authors = new List<AuthorModel>()
+                {
+                    authorRepository.GetById(joeAbercrombieId)
+                }
+            };
+            productRepository.Create(theBladeItself);
+
+            var customerAddress = new AddressModel()
+            {
+                City = "Haarlem",
+                StreetName = "Haarlemmerstraat",
+                HouseNumber = 1,
+                Postcode = "1234ZY"
+            };
+
+            var customer = new CustomerModel()
+            {
+                FirstName = "Buggs",
+                LastName = "Bunny",
+                EmailAddress = "buggs@bunny.com",
+                Address = customerAddress
+            };
+            customerRepository.Create(customer);
+
+            var secondAddress = new AddressModel()
+            {
+                City = "Utrecht",
+                StreetName = "Drieharingstraat",
+                HouseNumber = 6,
+                Postcode = "9876AB"
+            };
+
+            var secondCustomer = new CustomerModel()
+            {
+                FirstName = "Daffy",
+                LastName = "Duck",
+                EmailAddress = "daffy@duck.com",
+                Address = secondAddress
+            };
+            customerRepository.Create(secondCustomer);
         }
 
         private void ConfigureMapping()
@@ -142,6 +135,7 @@ namespace webshop
             {
                 ProductsRepository.ConfigureMapping(config);
                 AuthorsRepository.ConfigureMapping(config);
+                CustomerRepository.ConfigureMapping(config);
             });
         }
     }

@@ -159,7 +159,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Migrations\202210301559405_customer-email.cs" />
+    <Compile Include="Migrations\202210301559405_customer-email.designer.cs">
+      <DependentUpon>202210301559405_customer-email.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\AuthorModel.cs" />
+    <Compile Include="Models\CustomerModel.cs" />
     <Compile Include="Repositories\AuthorsRepository.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DependencyContainer.cs" />
@@ -182,6 +188,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ProductModel.cs" />
+    <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Repositories\ProductsRepository.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -261,6 +268,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202210291113337_address-base-entity.resx">
       <DependentUpon>202210291113337_address-base-entity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202210301559405_customer-email.resx">
+      <DependentUpon>202210301559405_customer-email.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

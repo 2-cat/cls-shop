@@ -61,6 +61,7 @@ namespace webshop
 
             container.Register<IProductsRepository, ProductsRepository>();
             container.Register<IAuthorsRepository, AuthorsRepository>();
+            container.Register<ICustomerRepository, CustomerRepository>();
 
             container.RegisterMvcControllers(Assembly.GetExecutingAssembly());
             container.Verify();

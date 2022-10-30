@@ -22,6 +22,8 @@ namespace webshop.Entities
         [ForeignKey("Address")]
         public Guid AddressId { get; set; }
 
+        public string EmailAddress { get; set; }
+
         public virtual AddressEntity Address { get; set; }
     }
 }

@@ -16,5 +16,9 @@ namespace webshop.Models
         public decimal Price { get; set; }
 
         public IList<AuthorModel> Authors { get; set; }
+
+        public DateTime? DateCreated { get; set; }
+
+        public DateTime? DateModified { get; set; }
     }
 }

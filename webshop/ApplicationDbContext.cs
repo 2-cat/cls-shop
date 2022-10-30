@@ -18,18 +18,12 @@ namespace webshop
         public DbSet<AuthoredByEntity> AuthoredBy { get; set; }
         public ApplicationDbContext()
         {
+
         }
 
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
-
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
-
-
-        //}
     }
 }
