@@ -22,6 +22,15 @@ namespace webshop
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+
+            bundles.Add(new ScriptBundle("~/bundles/vue").Include(
+                      "~/Scripts/vue.js",
+                      "~/Scripts/vuex.js",
+                      "~/Scripts/es6-promise.auto.js",
+                      "~/Scripts/vuex-persistedstate.umd.js",
+                      "~/Scripts/axios.min.js"
+                      ));
         }
     }
 }

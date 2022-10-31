@@ -159,6 +159,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AuthorsController.cs" />
+    <Compile Include="Controllers\BaseApiController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Migrations\202210301559405_customer-email.cs" />
     <Compile Include="Migrations\202210301559405_customer-email.designer.cs">
       <DependentUpon>202210301559405_customer-email.cs</DependentUpon>
@@ -191,7 +194,6 @@
     <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Repositories\ProductsRepository.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -206,16 +208,21 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\axios.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="appsettings.config" />
     <Content Include="connectionstrings.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\es6-promise.auto.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\vue.js" />
+    <Content Include="Scripts\vuex-persistedstate.umd.js" />
+    <Content Include="Scripts\vuex.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

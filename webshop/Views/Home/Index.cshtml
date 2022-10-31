@@ -1,24 +1,326 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+﻿<section id="app" class="container">
+    <div class="row">
+        <h1>The book store</h1>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
+    <hr />
+    <div class="row" v-if="page == 'store'">
+        <div v-if="products" class="column half">
+            <h3>Books:</h3>
+            <div v-for="(product, index) in products" class="item" v-on:click="goToProduct(product.Id)">
+                {{product.Name}}
+            </div>
+        </div>
+
+        <div v-if="authors" class="column half">
+            <h3>Authors:</h3>
+            <div v-for="author in authors" class="item" style="cursor: default">
+                {{author.Name}}
+            </div>
+            <div class="column full">
+                <hr />
+                <label>Add Author:</label>
+                <input v-model="newAuthor" placeholder="Author name" type="text" />
+                <div v-on:click="addAuthor" class="action-button">Add</div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div class="row" v-if="page == 'product'">
+        <div class="column half">
+            <div class="row">
+                <b>Book name:</b>
+                <p>{{product.Name}}</p>
+            </div>
+            <div class="row">
+                <b>Description:</b>
+                <p>{{product.Description}}</p>
+            </div>
+            <div class="row">
+                <b>Author(s):</b>
+                <p>
+                    <span v-for="author in product.Authors">{{author.Name}} <br/></span>
+                </p>
+            </div>
+            <div class="row">
+                <b>Price: </b>
+                <p>{{product.Price | currency}}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column full">
+                <div v-on:click="goToStore" class="action-button">Back</div>
+            </div>
+        </div>
     </div>
-</div>
+</section>
+
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/vue")
+<script type="text/javascript">
+    Vue.filter('currency', function (value, digits) {
+        if (typeof value !== "number") {
+            return value;
+        }
+
+        if (digits === null || typeof digits !== "number") {
+            digits = 2;
+        }
+
+        var formatter = new Intl.NumberFormat("NLD", {
+            style: 'currency',
+            currency: 'EUR',
+            minimumFractionDigits: digits,
+            maximumFractionDigits: digits
+        });
+        return formatter.format(value);
+    });
+
+    const store = new Vuex.Store({
+        state: function() {
+            return {
+                authors: [],
+                products: [],
+                product: [],
+            }
+        },
+        mutations: {
+            setAuthors: function (state, obj) {
+                state.authors = obj;
+            },
+            setProducts: function (state, obj) {
+                state.products = obj;
+            },
+            setProduct: function (state, obj) {
+                state.product = obj;
+            },
+        },
+        getters: {
+            authors: function (state) {
+                return state.authors;
+            },
+            products: function (state) {
+                return state.products;
+            },
+            product: function (state) {
+                return state.product;
+            },
+        }
+    });
+
+    var app = new Vue({
+        el: '#app',
+        store: store,
+        data: function () {
+            return {
+                page: 'store',
+                authors: this.$store.getters.authors,
+                products: this.$store.getters.products,
+                product: this.$store.getters.product,
+                newAuthor: ''
+            }
+        },
+        watch: {
+            authors: {
+                handler: function (val, oldVal) {
+                    store.commit('setAuthors', val);
+                },
+                deep: true
+            },
+            products: {
+                handler: function (val, oldVal) {
+                    store.commit('setProducts', val);
+                },
+                deep: true
+            },
+            product: {
+                handler: function (val, oldVal) {
+                    store.commit('setProduct', val);
+                },
+                deep: true
+            },
+        },
+        methods: {
+            getAuthors: function () {
+                var that = this;
+                this.axiosGet('authors', 'GetRange', function (data) {
+                    that.authors = data.authors;
+                });
+            },
+            getAuthorById: function (id) {
+                var that = this;
+                this.axiosGet('authors', 'GetById/' + id, function (data) {
+                    that.authors = data.authors;
+                });
+            },
+            getAuthorByKeyword: function (keyword) {
+                var that = this;
+                this.axiosGet('authors', 'GetByKeyword/' + keyword, function (data) {
+                    that.authors = data.authors;
+                });
+            },
+            getProducts: function () {
+                var that = this;
+                this.axiosGet('products', 'getrange', function (data) {
+                    that.products = data.products;
+                });
+
+            },
+            getProductById: function (id) {
+                var that = this;
+                this.axiosGet('products', 'GetById/' + id, function (data) {
+                    that.product = data.product;
+                });
+            },
+            goToProduct: function (id) {
+                this.getProductById(id);
+                this.page = 'product'
+            },
+            goToStore: function () {
+                this.getAuthors();
+                this.getProducts();
+                this.page = 'store';
+            },
+            addAuthor: function () {
+                var that = this;
+
+                const form = {
+                    value: this.newAuthor
+                }
+
+                this.axiosPost(form, 'authors', 'Create/' + that.newAuthor, function (data) {
+                    that.newAuthor = '';
+                    that.getAuthors();
+                });
+            },
+            axiosPost: function (form, controller, endpoint, completed) {
+                var that = this;
+                this.loading = true;
+                axios
+                    .post('/api/' + controller + '/' + endpoint, form)
+                    .then(function (response) {
+
+                        completed(response.data.Data);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                    .finally(function () {
+                        that.loading = false;
+                    });
+            },
+            axiosGet: function (controller, endpoint, completed) {
+                var that = this;
+                this.loading = true;
+                axios
+                    .get('/api/' + controller + '/' + endpoint)
+                    .then(function (response) {
+                        completed(response.data.Data);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                    .finally(function () {
+                        that.loading = false;
+                    });
+
+            },
+        },
+        created: async function () {
+            this.getAuthors();
+            this.getProducts();
+        }
+    });
+</script>
+}
+
+<style>
+
+    #app {
+        font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #2c3e50;
+    }
+
+    .container {
+        position: relative;
+        width: 100%;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    .column {
+        width: 100%;
+        float: left;
+        box-sizing: border-box;
+    }
+
+    .item {
+        background-color: #eeeeee;
+        border-radius: 5px;
+        margin: 5px 0px;
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .action-button {
+        background-color: #eeeeee;
+        border-radius: 5px;
+        padding: 8px;
+        margin: 0;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    input {
+        border: 1px solid #eeeeee;
+        border-radius: 5px;
+        padding: 8px;
+        margin: 0;
+    }
+
+    @@media (min-width: 320px) {
+
+        .row {
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+
+        .half {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        full {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
+
+    @@media (min-width: 550px) {
+        .container {
+            width: 80%;
+        }
+
+        .column {
+            margin-left: 4%;
+        }
+
+        .column:first-child {
+            margin-left: 0;
+        }
+
+        .half {
+            width: 48%;
+        }
+
+        full {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
+
+</style>

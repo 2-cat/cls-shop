@@ -36,39 +36,39 @@ namespace webshop
          */
         private void ConfigureDatabase()
         {
-            var productRepository = container.GetInstance<IProductsRepository>();
-            var authorRepository = container.GetInstance<IAuthorsRepository>();
+            var productsRepository = container.GetInstance<IProductsRepository>();
+            var authorsRepository = container.GetInstance<IAuthorsRepository>();
             var customerRepository = container.GetInstance<ICustomerRepository>();
 
             // There's no need to create additional (or duplicate) entries if this step has already been completed before. 
-            if (authorRepository.GetRange().Count > 0)
+            if (authorsRepository.GetRange().Count > 0)
             {
                 return;
             }
 
-            var jrrTolkienId = authorRepository.Create("J.R.R. Tolkien");
-            var christopherTolkienId = authorRepository.Create("Christopher Tolkien");
-            var frankHerbertId = authorRepository.Create("Frank Herbert");
-            var joeAbercrombieId = authorRepository.Create("Joe Abercrombie");
+            var jrrTolkienId = authorsRepository.Create("J.R.R. Tolkien");
+            var christopherTolkienId = authorsRepository.Create("Christopher Tolkien");
+            var frankHerbertId = authorsRepository.Create("Frank Herbert");
+            var joeAbercrombieId = authorsRepository.Create("Joe Abercrombie");
 
             var warOfTheRing = new ProductModel()
             {
                 Name = "War of the Ring",
                 Description = "The third part of The History of The Lord of the Rings, an enthralling account of the writing of the Book of the Century which contains many additional scenes and includes the unpublished Epilogue in its entirety. ",
                 Price = 14.99m,
-                Authors = authorRepository.GetByName("Tolkien")
+                Authors = authorsRepository.GetByName("Tolkien")
             };
 
-            productRepository.Create(warOfTheRing);
+            productsRepository.Create(warOfTheRing);
 
             var morgothsRing = new ProductModel()
             {
                 Name = "Morgoth's Ring",
                 Description = "The first of two companion volumes which documents the later writing of The Silmarillion, Tolkien's epic tale of war. ",
                 Price = 10m,
-                Authors = authorRepository.GetByName("Christopher Tolkien")
+                Authors = authorsRepository.GetByName("Christopher Tolkien")
             };
-            productRepository.Create(morgothsRing);
+            productsRepository.Create(morgothsRing);
 
             var dune = new ProductModel()
             {
@@ -77,10 +77,10 @@ namespace webshop
                 Price = 10m,
                 Authors = new List<AuthorModel>()
                 {
-                    authorRepository.GetById(frankHerbertId)
+                    authorsRepository.GetById(frankHerbertId)
                 }
             };
-            productRepository.Create(dune);
+            productsRepository.Create(dune);
 
             var theBladeItself = new ProductModel()
             {
@@ -89,10 +89,10 @@ namespace webshop
                 Price = 10m,
                 Authors = new List<AuthorModel>()
                 {
-                    authorRepository.GetById(joeAbercrombieId)
+                    authorsRepository.GetById(joeAbercrombieId)
                 }
             };
-            productRepository.Create(theBladeItself);
+            productsRepository.Create(theBladeItself);
 
             var customerAddress = new AddressModel()
             {

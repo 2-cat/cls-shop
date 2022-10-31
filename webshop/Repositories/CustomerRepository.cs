@@ -64,14 +64,6 @@ namespace webshop.Repositories
                 return match.Id;
             }
 
-            //var addressEntity = Mapper.Map<AddressEntity>(customer.Address);
-
-            //foreach (var author in product.Authors)
-            //{
-            //    Guid authorId = authorsRepository.Create(author);
-            //    author.Id = authorId;
-            //}
-
             var entity = Mapper.Map<CustomerEntity>(customer);
             dbContext.Customers.Add(entity);
 
@@ -86,7 +78,6 @@ namespace webshop.Repositories
             config.CreateMap<CustomerModel, CustomerEntity>()
                 .ForMember(entity => entity.DateCreated, opts => opts.MapFrom(model => model.DateCreated.HasValue ? model.DateCreated : DateTime.Now))
                 .ForMember(entity => entity.Id, opts => opts.MapFrom(model => model.Id == Guid.Empty ? Guid.NewGuid() : model.Id));
-
 
             config.CreateMap<AddressModel, AddressEntity>();
             config.CreateMap<AddressEntity, AddressModel>();
